@@ -1046,6 +1046,8 @@ static int sc16is7xx_startup(struct uart_port *port)
 			      SC16IS7XX_EFCR_TXDISABLE_BIT,
 			      0);
 
+	sc16is7xx_reconf_rs485(port);
+
 	/* Enable RX, TX interrupts */
 	val = SC16IS7XX_IER_RDI_BIT | SC16IS7XX_IER_THRI_BIT;
 	sc16is7xx_port_write(port, SC16IS7XX_IER_REG, val);
@@ -1278,6 +1280,8 @@ static int sc16is7xx_probe(struct device *dev,
 			ret = -ENOMEM;
 			goto out_ports;
 		}
+
+		uart_get_rs485_mode(dev, &s->p[i].port.rs485);
 
 		/* Disable all interrupts */
 		sc16is7xx_port_write(&s->p[i].port, SC16IS7XX_IER_REG, 0);
